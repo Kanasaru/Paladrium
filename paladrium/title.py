@@ -10,23 +10,11 @@
 # PyGame
 import pygame
 
-# Paladrium packages
-from . import constants
+import os
+from pathlib import Path
+
+# Paladrium modules
 from . import events
-
-
-### CONSTANTS
-
-IMAGE_NORMAL = pygame.Surface((100, 32))
-IMAGE_NORMAL.fill(pygame.Color('dodgerblue1'))
-IMAGE_HOVER = pygame.Surface((100, 32))
-IMAGE_HOVER.fill(pygame.Color('lightskyblue'))
-IMAGE_DOWN = pygame.Surface((100, 32))
-IMAGE_DOWN.fill(pygame.Color('aquamarine1'))
-FONT = pygame.font.SysFont('Comic Sans MS', 16)
-
-STD_BUTTON_WIDTH  = 160
-STD_BUTTON_HEIGHT = 40
 
 
 ### CLASSES & FUNCTIONS
@@ -74,36 +62,39 @@ class Title():
 
 class Main(Title):
     
-    def __init__(self, screen, eventhandler):
-        super().__init__(screen, eventhandler, constants.BLACK)
+    def __init__(self, screen, eventhandler, settings):
+        self.settings = settings
+        
+        super().__init__(screen, eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
-            constants.DISPLAYWIDTH / 2,
+            self.settings.get_display_resolution(True, False) / 2,
             20,
             'Paladrium',
             (255, 255, 255),
+            60,
             'center',
-            pygame.font.SysFont('Comic Sans MS', 60))
+            self.settings)
         
         # insert start game button
         self.start_button = Button(
-            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
-            constants.DISPLAYHEIGHT / 2 - STD_BUTTON_HEIGHT,
-            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.settings.get_display_resolution(True, False) / 2 - self.settings.get_button_size(True, False) / 2,
+            self.settings.get_display_resolution(False, True) / 2 - self.settings.get_button_size(False, True),
+            self.settings.get_button_size(True, False), self.settings.get_button_size(False, True),
             self.cb_start_game,
-            FONT,
             'New Game',
-            (255, 255, 255))
+            (0, 0, 0),
+            self.settings)
         
         # insert quit game button
         self.quit_button = Button(
-            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
-            constants.DISPLAYHEIGHT / 2 + STD_BUTTON_HEIGHT,
-            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.settings.get_display_resolution(True, False) / 2 - self.settings.get_button_size(True, False) / 2,
+            self.settings.get_display_resolution(False, True) / 2 + self.settings.get_button_size(False, True),
+            self.settings.get_button_size(True, False), self.settings.get_button_size(False, True),
             self.cb_quit_game,
-            FONT,
             'Quit Game',
-            (255, 255, 255))
+            (0, 0, 0),
+            self.settings)
         
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.start_button, self.quit_button)
@@ -124,38 +115,41 @@ class Main(Title):
 
 class NewGame(Title):
     
-    def __init__(self, screen, eventhandler):
-        super().__init__(screen, eventhandler, constants.BLACK)
+    def __init__(self, screen, eventhandler, settings):
+        self.settings = settings
+        
+        super().__init__(screen, eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
-            constants.DISPLAYWIDTH / 2,
+            self.settings.get_display_resolution(True, False) / 2,
             20,
             'Paladrium',
             (255, 255, 255),
+            60,
             'center',
-            pygame.font.SysFont('Comic Sans MS', 60))
+            self.settings)
         
         # TODO: adding Inputfield for Playername    
         
         # insert start game button
         self.start_button = Button(
-            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
-            constants.DISPLAYHEIGHT / 2 - STD_BUTTON_HEIGHT,
-            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.settings.get_display_resolution(True, False) / 2 - self.settings.get_button_size(True, False) / 2,
+            self.settings.get_display_resolution(False, True) / 2 - self.settings.get_button_size(False, True),
+            self.settings.get_button_size(True, False), self.settings.get_button_size(False, True),
             self.cb_start_game,
-            FONT,
             'Start Game',
-            (255, 255, 255))
+            (255, 255, 255),
+            self.settings)
         
         # insert main menu button
         self.mainmenu_button = Button(
-            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
-            constants.DISPLAYHEIGHT / 2 + STD_BUTTON_HEIGHT,
-            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.settings.get_display_resolution(True, False) / 2 - self.settings.get_button_size(True, False) / 2,
+            self.settings.get_display_resolution(False, True) / 2 + self.settings.get_button_size(False, True),
+            self.settings.get_button_size(True, False), self.settings.get_button_size(False, True),
             self.cb_main_menu,
-            FONT,
             'Main Menu',
-            (255, 255, 255))
+            (255, 255, 255),
+            self.settings)
         
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.start_button, self.mainmenu_button)
@@ -176,34 +170,38 @@ class NewGame(Title):
 
 class Error(Title):
     
-    def __init__(self, screen, eventhandler):
-        super().__init__(screen, eventhandler, constants.BLACK)
+    def __init__(self, screen, eventhandler, settings):
+        self.settings = settings
+        
+        super().__init__(screen, eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
-            constants.DISPLAYWIDTH / 2,
+            self.settings.get_display_resolution(True, False) / 2,
             20,
             'Paladrium',
             (255, 255, 255),
+            60,
             'center',
-            pygame.font.SysFont('Comic Sans MS', 60))
+            self.settings)
         
         self.error_text = Textfield(
-            constants.DISPLAYWIDTH / 2,
+            self.settings.get_display_resolution(True, False) / 2,
             100,
             'Hm...something went wrong',
             (255, 0, 0),
+            self.settings.get_font_size_std(),
             'center',
-            pygame.font.SysFont('Comic Sans MS', 24))
+            self.settings)
         
         # insert quit game button
         self.quit_button = Button(
-            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
-            constants.DISPLAYHEIGHT / 2,
-            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.settings.get_display_resolution(True, False) / 2 - self.settings.get_button_size(True, False) / 2,
+            self.settings.get_display_resolution(False, True) / 2 - self.settings.get_button_size(False, True),
+            self.settings.get_button_size(True, False), self.settings.get_button_size(False, True),
             self.cb_quit_game,
-            FONT,
             'Quit Game',
-            (255, 255, 255))
+            (255, 255, 255),
+            self.settings)
         
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.error_text, self.quit_button)
@@ -220,12 +218,18 @@ class Error(Title):
 
 class Textfield(pygame.sprite.Sprite):
     
-    def __init__(self, x, y, text='', text_color=(0, 0, 0), position='left', font=FONT):
+    def __init__(self, x, y, text, text_color, fontsize, position, settings):
+        self.settings = settings
+        
         super().__init__()
+        
+        font = pygame.font.SysFont(self.settings.get_font_std(), fontsize)
         
         text_width, text_height = font.size(text)
         
         self.image = pygame.Surface((text_width, text_height))
+        self.image.set_colorkey((0, 0, 0))
+        
         if position == 'left':
             self.rect = self.image.get_rect(topleft=(x, y))
         elif position == 'center':
@@ -249,17 +253,23 @@ class Textfield(pygame.sprite.Sprite):
 ##
 
 class Button(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, width, height, callback,
-                 font=FONT, text='', text_color=(0, 0, 0),
-                 image_normal=IMAGE_NORMAL, image_hover=IMAGE_HOVER,
-                 image_down=IMAGE_DOWN):
+    
+    def __init__(self, x, y, width, height, callback, text, text_color, settings):
+        self.settings = settings
+        
         super().__init__()
         
+        font = pygame.font.SysFont(self.settings.get_font_std(), self.settings.get_font_size_std())
+        
+        # load button images and convert alpha
+        self.image_normal = pygame.image.load(self.settings.get_button_image_file()).convert_alpha()
+        self.image_hover = pygame.image.load(self.settings.get_button_hover_image_file()).convert_alpha()
+        self.image_down = pygame.image.load(self.settings.get_button_down_image_file()).convert_alpha()
+        
         # scale button images to given button size
-        self.image_normal = pygame.transform.scale(image_normal, (width, height))
-        self.image_hover = pygame.transform.scale(image_hover, (width, height))
-        self.image_down = pygame.transform.scale(image_down, (width, height))
+        self.image_normal = pygame.transform.scale(self.image_normal, (width, height))
+        self.image_hover = pygame.transform.scale(self.image_hover, (width, height))
+        self.image_down = pygame.transform.scale(self.image_down, (width, height))
 
         # use 'normal' as current
         self.image = self.image_normal

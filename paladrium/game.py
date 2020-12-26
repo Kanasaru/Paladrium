@@ -11,9 +11,8 @@
 import pygame
 pygame.init()
 
-# Paladrium packages
-from . import constants
-from . import surface
+# Paladrium modules
+from . import settings
 from . import title
 from . import events
 
@@ -27,23 +26,24 @@ from . import events
 ##
 
 class Game():
-    
+
     def __init__(self, path):
-        self.gamepath = path
-        self.exit_game = False
-        self.clock = pygame.time.Clock()
-        self.current_screen = None
-        self.new_screen = False
-        self.screen_number = 0
-        
+        # creating needed instances
+        self.settings = settings.Settings(path)
         self.eventhandler = events.EventHandler()
+        self.clock = pygame.time.Clock()
         
     def start(self):
         # build main window
-        self.screen = pygame.display.set_mode((constants.DISPLAYWIDTH, constants.DISPLAYHEIGHT))
-        self.screen.fill(constants.BLACK)
-        display_title = constants.TITLE + " - v" + constants.VERSION + " by " + constants.AUTHOR
+        self.screen = pygame.display.set_mode(self.settings.get_display_resolution())
+        display_title = self.settings.get_game_title() + " - v" + self.settings.get_game_version() + " by " + self.settings.get_game_author()
         pygame.display.set_caption(display_title)
+        
+        # define first loop parameter
+        self.exit_game = False
+        self.current_screen = None
+        self.new_screen = False
+        self.screen_number = self.settings.get_default_screen()
         
         # start the loop
         self.loop()
@@ -52,7 +52,7 @@ class Game():
         while not self.exit_game:
             
             # set framerate
-            self.clock.tick(constants.FPS)
+            self.clock.tick(self.settings.get_fps())
             
             self.handle_events()
             
@@ -85,16 +85,15 @@ class Game():
                     self.new_screen = True
                     self.screen_number = 1
                     
-        
     def run_logic(self):
         # new screen needed?
         if self.new_screen:
             if self.screen_number == 0:
-                self.current_screen = title.Main(self.screen, self.eventhandler)
+                self.current_screen = title.Main(self.screen, self.eventhandler, self.settings)
             elif self.screen_number == 1:
-                self.current_screen = title.NewGame(self.screen, self.eventhandler)
+                self.current_screen = title.NewGame(self.screen, self.eventhandler, self.settings)
             else:
-                self.current_screen = title.Error(self.screen, self.eventhandler)
+                self.current_screen = title.Error(self.screen, self.eventhandler, self.settings)
                 
             self.new_screen = False
         
@@ -103,7 +102,7 @@ class Game():
             self.current_screen.run_logic()
         else:
             # build main title screen
-            self.current_screen = title.Main(self.screen, self.eventhandler)
+            self.current_screen = title.Main(self.screen, self.eventhandler, self.settings)
     
     def render(self):
         # render current title or sector
@@ -114,4 +113,4 @@ class Game():
     
     def exit(self):
         pygame.quit()
-        
+     
