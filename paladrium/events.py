@@ -7,13 +7,17 @@
 import pygame
 
 # events
-STARTGAME  = 1000
-QUITGAME   = 1001
+MAINMENU   = 1000
+NEWGAME    = 1001
+STARTGAME  = 1002
+QUITGAME   = 1003
 
 PLAYERDIED = 2000
 
 class EventHandler():
     def __init__(self):
+        self.e_mainmenu = pygame.event.Event(pygame.USEREVENT, e_type=MAINMENU)
+        self.e_newgame = pygame.event.Event(pygame.USEREVENT, e_type=NEWGAME)
         self.e_startgame = pygame.event.Event(pygame.USEREVENT, e_type=STARTGAME)
         self.e_quitgame = pygame.event.Event(pygame.USEREVENT, e_type=QUITGAME)
         self.e_playerdied = pygame.event.Event(pygame.USEREVENT, e_type=PLAYERDIED)

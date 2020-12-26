@@ -68,11 +68,11 @@ class Title():
         
 
 ##
-# Class: MainTitle()
+# Class: Main()
 # Generates the start screen and handle it's events
 ##
 
-class MainTitle(Title):
+class Main(Title):
     
     def __init__(self, screen, eventhandler):
         super().__init__(screen, eventhandler, constants.BLACK)
@@ -92,7 +92,7 @@ class MainTitle(Title):
             STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
             self.cb_start_game,
             FONT,
-            'Spiel starten',
+            'New Game',
             (255, 255, 255))
         
         # insert quit game button
@@ -102,7 +102,7 @@ class MainTitle(Title):
             STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
             self.cb_quit_game,
             FONT,
-            'Spiel beenden',
+            'Quit Game',
             (255, 255, 255))
         
         # add buttons to the title sprite group
@@ -115,6 +115,102 @@ class MainTitle(Title):
     # callback function for start game button 
     def cb_start_game(self):
         pygame.event.post(self.eventhandler.e_startgame)
+
+        
+##
+# Class: NewGame()
+# Generates the start screen and handle it's events
+##
+
+class NewGame(Title):
+    
+    def __init__(self, screen, eventhandler):
+        super().__init__(screen, eventhandler, constants.BLACK)
+        
+        self.title_text = Textfield(
+            constants.DISPLAYWIDTH / 2,
+            20,
+            'Paladrium',
+            (255, 255, 255),
+            'center',
+            pygame.font.SysFont('Comic Sans MS', 60))
+        
+        # TODO: adding Inputfield for Playername    
+        
+        # insert start game button
+        self.start_button = Button(
+            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
+            constants.DISPLAYHEIGHT / 2 - STD_BUTTON_HEIGHT,
+            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.cb_start_game,
+            FONT,
+            'Start Game',
+            (255, 255, 255))
+        
+        # insert main menu button
+        self.mainmenu_button = Button(
+            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
+            constants.DISPLAYHEIGHT / 2 + STD_BUTTON_HEIGHT,
+            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.cb_main_menu,
+            FONT,
+            'Main Menu',
+            (255, 255, 255))
+        
+        # add buttons to the title sprite group
+        self.all_sprites.add(self.title_text, self.start_button, self.mainmenu_button)
+    
+    # callback function for start game button 
+    def cb_start_game(self):
+        pygame.event.post(self.eventhandler.e_newgame)
+        
+    # callback function for start game button 
+    def cb_main_menu(self):
+        pygame.event.post(self.eventhandler.e_mainmenu)
+
+
+##
+# Class: Error()
+# Generates the start screen and handle it's events
+##
+
+class Error(Title):
+    
+    def __init__(self, screen, eventhandler):
+        super().__init__(screen, eventhandler, constants.BLACK)
+        
+        self.title_text = Textfield(
+            constants.DISPLAYWIDTH / 2,
+            20,
+            'Paladrium',
+            (255, 255, 255),
+            'center',
+            pygame.font.SysFont('Comic Sans MS', 60))
+        
+        self.error_text = Textfield(
+            constants.DISPLAYWIDTH / 2,
+            100,
+            'Hm...something went wrong',
+            (255, 0, 0),
+            'center',
+            pygame.font.SysFont('Comic Sans MS', 24))
+        
+        # insert quit game button
+        self.quit_button = Button(
+            constants.DISPLAYWIDTH / 2 - STD_BUTTON_WIDTH / 2,
+            constants.DISPLAYHEIGHT / 2,
+            STD_BUTTON_WIDTH, STD_BUTTON_HEIGHT,
+            self.cb_quit_game,
+            FONT,
+            'Quit Game',
+            (255, 255, 255))
+        
+        # add buttons to the title sprite group
+        self.all_sprites.add(self.title_text, self.error_text, self.quit_button)
+        
+    # callback function for quit game button
+    def cb_quit_game(self):
+        pygame.event.post(self.eventhandler.e_quitgame)
 
 
 ##
