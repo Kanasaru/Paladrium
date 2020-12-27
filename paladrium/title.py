@@ -62,10 +62,10 @@ class Title():
 
 class Main(Title):
     
-    def __init__(self, screen, eventhandler, settings):
+    def __init__(self, eventhandler, settings):
         self.settings = settings
         
-        super().__init__(screen, eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -115,10 +115,10 @@ class Main(Title):
 
 class NewGame(Title):
     
-    def __init__(self, screen, eventhandler, settings):
+    def __init__(self, eventhandler, settings):
         self.settings = settings
         
-        super().__init__(screen, eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -170,10 +170,10 @@ class NewGame(Title):
 
 class Error(Title):
     
-    def __init__(self, screen, eventhandler, settings):
+    def __init__(self, eventhandler, settings):
         self.settings = settings
         
-        super().__init__(screen, eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,

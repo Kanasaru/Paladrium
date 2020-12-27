@@ -18,6 +18,7 @@ class Settings():
         self.fps                = 60
         self.display_resolution = (1280, 720)
         self.default_screen     = 0
+        self.screen             = None
         
         ### COLORS
         # basic colors
@@ -46,6 +47,9 @@ class Settings():
         # size
         self.button_size = (220, 60)
 
+    def get_screen(self):
+        return self.screen
+    
     def get_font_std(self):
         return self.font_std
         

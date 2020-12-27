@@ -35,7 +35,7 @@ class Game():
         
     def start(self):
         # build main window
-        self.screen = pygame.display.set_mode(self.settings.get_display_resolution())
+        self.settings.screen = pygame.display.set_mode(self.settings.get_display_resolution())
         display_title = self.settings.get_game_title() + " - v" + self.settings.get_game_version() + " by " + self.settings.get_game_author()
         pygame.display.set_caption(display_title)
         
@@ -89,11 +89,11 @@ class Game():
         # new screen needed?
         if self.new_screen:
             if self.screen_number == 0:
-                self.current_screen = title.Main(self.screen, self.eventhandler, self.settings)
+                self.current_screen = title.Main(self.eventhandler, self.settings)
             elif self.screen_number == 1:
-                self.current_screen = title.NewGame(self.screen, self.eventhandler, self.settings)
+                self.current_screen = title.NewGame(self.eventhandler, self.settings)
             else:
-                self.current_screen = title.Error(self.screen, self.eventhandler, self.settings)
+                self.current_screen = title.Error(self.eventhandler, self.settings)
                 
             self.new_screen = False
         
@@ -102,7 +102,7 @@ class Game():
             self.current_screen.run_logic()
         else:
             # build main title screen
-            self.current_screen = title.Main(self.screen, self.eventhandler, self.settings)
+            self.current_screen = title.Main(self.eventhandler, self.settings)
     
     def render(self):
         # render current title or sector
