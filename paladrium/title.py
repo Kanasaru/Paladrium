@@ -276,9 +276,12 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
         
         # center text rect
-        image_center = self.image.get_rect().center
+        image_center_x, image_center_y = self.image.get_rect().center
+        padding = self.settings.get_button_text_padding()
+        top_padding = self.settings.get_button_text_padding()[2] - self.settings.get_button_text_padding()[0]
+        left_padding = self.settings.get_button_text_padding()[3] - self.settings.get_button_text_padding()[1]
         text_surf = font.render(text, True, text_color)
-        text_rect = text_surf.get_rect(center=image_center)
+        text_rect = text_surf.get_rect(center=(image_center_x - left_padding, image_center_y - top_padding))
         
         # blit text onto images
         for image in (self.image_normal, self.image_hover, self.image_down):

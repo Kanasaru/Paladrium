@@ -43,10 +43,14 @@ class Settings():
         self.button_image_file       = path + "assets/button.png"
         self.button_hover_image_file = path + "assets/button-clicked.png"
         self.button_down_image_file  = path + "assets/button-clicked.png"
+        self.button_text_padding     = (0, 0, 3, 0) # top, right, bottom, left
         
         # size
         self.button_size = (220, 60)
 
+    def get_button_text_padding(self):
+        return self.button_text_padding
+    
     def get_screen(self):
         return self.screen
     
