@@ -21,26 +21,39 @@ from . import events
 
 ##
 # Class: Game()
-# Object holds every information of a running instance of Paladrium
-# After inititializing and call start() it runs the gameloop.
+# Parent: none
+# After inititializing and it runs the gameloop
 ##
 
 class Game():
 
+    ##
+    # Method: __init__
+    # Class: Game()
+    # @param: (str) path
+    # @return: none
+    # Init main instances, builds up main window and starts loop
+    ##
     def __init__(self, path):
         # creating needed instances
         self.settings = settings.Settings(path, events.EventHandler())
         self.clock = pygame.time.Clock()
-
-    def start(self):
+        
         # build main window
-        self.settings.screen = pygame.display.set_mode(self.settings.get_display_resolution())
+        self.settings.set_screen(pygame.display.set_mode(self.settings.get_display_resolution()))
         display_title = self.settings.get_game_title() + " - v" + self.settings.get_game_version() + " by " + self.settings.get_game_author()
         pygame.display.set_caption(display_title)
         
         # start the loop
         self.loop()
 
+    ##
+    # Method: loop
+    # Class: Game()
+    # @param: none
+    # @return: none
+    # Starts game loop, sets framerate and calls event/logic/render-handler
+    ##
     def loop(self):
         while not self.settings.is_exit_game():
             
@@ -55,6 +68,13 @@ class Game():
                
         self.exit()
     
+    ##
+    # Method: handle_events
+    # Class: Game()
+    # @param: none
+    # @return: none
+    # Does all event handling and calls every event handling function/method
+    ##
     def handle_events(self):
         # collect all raised events
         self.settings.evhandler().collect_events()
@@ -77,7 +97,14 @@ class Game():
                 if event.e_type == self.settings.evhandler().STARTGAME:
                     self.settings.set_new_screen(True)
                     self.settings.set_new_screen_number(1)
-                    
+    
+    ##
+    # Method: run_logic
+    # Class: Game()
+    # @param: none
+    # @return: none
+    # Does all logic based on events and settings
+    ##            
     def run_logic(self):
         # new screen needed?
         if self.settings.is_new_screen():
@@ -97,6 +124,13 @@ class Game():
             # build main title screen
             self.settings.set_current_screen(title.Main(self.settings))
     
+    ##
+    # Method: render
+    # Class: Game()
+    # @param: none
+    # @return: none
+    # Draws on main surface and calls every rendering function/method
+    ##
     def render(self):
         # render current title or sector
         self.settings.get_current_screen().render()
@@ -104,6 +138,13 @@ class Game():
         # showing new frame
         pygame.display.flip()
     
+    ##
+    # Method: exit
+    # Class: Game()
+    # @param: none
+    # @return: none
+    # Exit procedure for clean shutdown 
+    ##
     def exit(self):
         pygame.quit()
      

@@ -9,7 +9,6 @@ import paladrium
 
 def main():
     game = paladrium.game.Game(os.path.dirname(__file__))
-    game.start()
 
 if __name__ == "__main__":
     main()

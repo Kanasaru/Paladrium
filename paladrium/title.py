@@ -21,21 +21,35 @@ from . import events
 
 ##
 # Class: Title()
+# Parent: none
 # Contains general methods for title screen handling
 ##
 
 class Title():
     
-    def __init__(self, screen, eventhandler, bg_color):
+    ##
+    # Method: __init__
+    # Class: Title()
+    # @param: (object) eventhandler
+    # @param: (tulpe) bg_color
+    # @return: none
+    # Init the title
+    ##
+    def __init__(self, eventhandler, bg_color):
         # all title sprites are collected for rendering
         self.all_sprites = pygame.sprite.Group()
         # event handler instance
         self.eventhandler = eventhandler
-        # main screen instance
-        self.title_screen = screen
         # title background color
         self.bg_color = bg_color
-        
+    
+    ##
+    # Method: handle_events
+    # Class: Title()
+    # @param: none
+    # @return: none
+    # Handles all title events
+    ##
     def handle_events(self):
         # check for typical title events
         for event in self.eventhandler.get_events():
@@ -44,28 +58,50 @@ class Title():
                 button.handle_event(event)
             # TODO: mouse and key events
     
+    ##
+    # Method: run_logic
+    # Class: Title()
+    # @param: none
+    # @return: none
+    # Runs all logic of the title
+    ##
     def run_logic(self):
         # update all title sprites
         self.all_sprites.update()
-        
+    
+    ##
+    # Method: render
+    # Class: Title()
+    # @param: none
+    # @return: none
+    # Renders all sprites of the title
+    ##
     def render(self):
         # fill screen with title background color
-        self.title_screen.fill(self.bg_color)
-        # drawe all title sprites
-        self.all_sprites.draw(self.title_screen)
+        pygame.display.get_surface().fill(self.bg_color)
+        # draw all title sprites
+        self.all_sprites.draw(pygame.display.get_surface())
         
 
 ##
 # Class: Main()
+# Parent: Title()
 # Generates the start screen and handle it's events
 ##
 
 class Main(Title):
     
+    ##
+    # Method: __init__
+    # Class: Main()
+    # @param: (object) settings
+    # @return: none
+    # Init the title
+    ##
     def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
+        super().__init__(self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -99,26 +135,46 @@ class Main(Title):
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.start_button, self.quit_button)
         
-    # callback function for quit game button
+    ##
+    # Method: cb_quit_game
+    # Class: Main()
+    # @param: none
+    # @return: none
+    # Callback function for quit game button
+    ##
     def cb_quit_game(self):
         pygame.event.post(self.settings.evhandler().e_quitgame)
     
-    # callback function for start game button 
+    ##
+    # Method: cb_start_game
+    # Class: Main()
+    # @param: none
+    # @return: none
+    # Callback function for start game button
+    ##
     def cb_start_game(self):
         pygame.event.post(self.settings.evhandler().e_startgame)
 
         
 ##
 # Class: NewGame()
-# Generates the start screen and handle it's events
+# Parent: Title()
+# Generates the new game screen and handle it's events
 ##
 
 class NewGame(Title):
     
+    ##
+    # Method: __init__
+    # Class: NewGame()
+    # @param: (object) settings
+    # @return: none
+    # Init the title
+    ##
     def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
+        super().__init__(self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -154,26 +210,46 @@ class NewGame(Title):
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.start_button, self.mainmenu_button)
     
-    # callback function for start game button 
+    ##
+    # Method: cb_start_game
+    # Class: NewGame()
+    # @param: none
+    # @return: none
+    # Callback function for start game button
+    ##
     def cb_start_game(self):
         pygame.event.post(self.settings.evhandler().e_newgame)
-        
-    # callback function for start game button 
+    
+    ##
+    # Method: cb_main_menu
+    # Class: NewGame()
+    # @param: none
+    # @return: none
+    # Callback function for start game button
+    ##
     def cb_main_menu(self):
         pygame.event.post(self.settings.evhandler().e_mainmenu)
 
 
 ##
 # Class: Error()
-# Generates the start screen and handle it's events
+# Parent: Title()
+# Generates the error screen and handle it's events
 ##
 
 class Error(Title):
     
+    ##
+    # Method: __init__
+    # Class: Error()
+    # @param: (object) settings
+    # @return: none
+    # Init the title
+    ##
     def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
+        super().__init__(self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -206,18 +282,38 @@ class Error(Title):
         # add buttons to the title sprite group
         self.all_sprites.add(self.title_text, self.error_text, self.quit_button)
         
-    # callback function for quit game button
+    ##
+    # Method: cb_quit_game
+    # Class: Error()
+    # @param: none
+    # @return: none
+    # Callback function for quit game button
+    ##
     def cb_quit_game(self):
         pygame.event.post(self.settings.evhandler().e_quitgame)
 
 
 ##
 # Class: Textfield()
+# Parent: pygame.sprite.Sprite()
 # Helper class to show, customize and align text on a title
 ##
 
 class Textfield(pygame.sprite.Sprite):
     
+    ##
+    # Method: __init__
+    # Class: Textfield()
+    # @param: (int) x
+    # @param: (int) y
+    # @param: (str) text
+    # @param: (tulpe) text_color
+    # @param: (int) fontsize
+    # @param: (tulpe) position
+    # @param: (object) settings
+    # @return: none
+    # Init the textfield
+    ##
     def __init__(self, x, y, text, text_color, fontsize, position, settings):
         self.settings = settings
         
@@ -241,23 +337,46 @@ class Textfield(pygame.sprite.Sprite):
         text_rect = text_surf.get_rect()
         
         self.image.blit(text_surf, text_rect)
-        
+    
+    ##
+    # Method: handle_event
+    # Class: Textfield()
+    # @param: (object) event
+    # @return: none
+    # Handles all textfield events
+    ##
     def handle_event(self, event):
         return
 
 
 ##
 # Class: Button()
+# Parent: pygame.sprite.Sprite()
 # Helper class to create buttons and their interactions on a title
 # Initial source code by skrx from stackoverflow.com (https://stackoverflow.com/users/6220679/skrx)
 ##
 
 class Button(pygame.sprite.Sprite):
     
+    ##
+    # Method: __init__
+    # Class: Button()
+    # @param: (int) x
+    # @param: (int) y
+    # @param: (int) width
+    # @param: (int) height
+    # @param: (str) callback
+    # @param: (str) text
+    # @param: (tulpe) text_color
+    # @param: (object) settings
+    # @return: none
+    # Init the button
+    ##
     def __init__(self, x, y, width, height, callback, text, text_color, settings):
-        self.settings = settings
         
         super().__init__()
+        
+        self.settings = settings
         
         font = pygame.font.SysFont(self.settings.get_font_std(), self.settings.get_font_size_std())
         
@@ -291,6 +410,13 @@ class Button(pygame.sprite.Sprite):
         self.callback = callback
         self.button_down = False
 
+    ##
+    # Method: handle_event
+    # Class: Button()
+    # @param: (object) event
+    # @return: none
+    # Handles a button event
+    ##
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
