@@ -38,7 +38,7 @@ class Title():
         
     def handle_events(self):
         # check for typical title events
-        for event in self.eventhandler.events:
+        for event in self.eventhandler.get_events():
             # buttons
             for button in self.all_sprites:
                 button.handle_event(event)
@@ -62,10 +62,10 @@ class Title():
 
 class Main(Title):
     
-    def __init__(self, eventhandler, settings):
+    def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -101,11 +101,11 @@ class Main(Title):
         
     # callback function for quit game button
     def cb_quit_game(self):
-        pygame.event.post(self.eventhandler.e_quitgame)
+        pygame.event.post(self.settings.evhandler().e_quitgame)
     
     # callback function for start game button 
     def cb_start_game(self):
-        pygame.event.post(self.eventhandler.e_startgame)
+        pygame.event.post(self.settings.evhandler().e_startgame)
 
         
 ##
@@ -115,10 +115,10 @@ class Main(Title):
 
 class NewGame(Title):
     
-    def __init__(self, eventhandler, settings):
+    def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -156,11 +156,11 @@ class NewGame(Title):
     
     # callback function for start game button 
     def cb_start_game(self):
-        pygame.event.post(self.eventhandler.e_newgame)
+        pygame.event.post(self.settings.evhandler().e_newgame)
         
     # callback function for start game button 
     def cb_main_menu(self):
-        pygame.event.post(self.eventhandler.e_mainmenu)
+        pygame.event.post(self.settings.evhandler().e_mainmenu)
 
 
 ##
@@ -170,10 +170,10 @@ class NewGame(Title):
 
 class Error(Title):
     
-    def __init__(self, eventhandler, settings):
+    def __init__(self, settings):
         self.settings = settings
         
-        super().__init__(self.settings.get_screen(), eventhandler, self.settings.color('background'))
+        super().__init__(self.settings.get_screen(), self.settings.evhandler(), self.settings.color('background'))
         
         self.title_text = Textfield(
             self.settings.get_display_resolution(True, False) / 2,
@@ -208,7 +208,7 @@ class Error(Title):
         
     # callback function for quit game button
     def cb_quit_game(self):
-        pygame.event.post(self.eventhandler.e_quitgame)
+        pygame.event.post(self.settings.evhandler().e_quitgame)
 
 
 ##

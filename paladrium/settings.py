@@ -7,18 +7,24 @@
 
 class Settings():
     
-    def __init__(self, path):
+    def __init__(self, path, eventhandler):
         ### BASIC INFORMATION
         self.game_title   = "Paladrium"
         self.game_version = "0.1"
         self.game_author  = "Kanasaru"
         self.game_path    = path
         
+        self.event_handler = eventhandler
+        
+        self.exit_game = False
+        
         ### SCREEN
-        self.fps                = 60
-        self.display_resolution = (1280, 720)
-        self.default_screen     = 0
-        self.screen             = None
+        self.fps                    = 60
+        self.display_resolution     = (1280, 720)
+        self.screen                 = None
+        self.current_screen         = None
+        self.new_screen             = False
+        self.new_screen_number      = 0
         
         ### COLORS
         # basic colors
@@ -48,6 +54,29 @@ class Settings():
         # size
         self.button_size = (220, 60)
 
+    def is_exit_game(self):
+        return self.exit_game
+        
+    def set_exit_game(self, is_exit):
+        if isinstance(is_exit, bool):
+            self.exit_game = is_exit
+            return True
+        
+        return False
+    
+    def is_new_screen(self):
+        return self.new_screen
+        
+    def set_new_screen(self, is_new_screen):
+        if isinstance(is_new_screen, bool):
+            self.new_screen = is_new_screen
+            return True
+        
+        return False
+        
+    def evhandler(self):
+        return self.event_handler
+        
     def get_button_text_padding(self):
         return self.button_text_padding
     
@@ -107,16 +136,23 @@ class Settings():
             return True
             
         return False
+    
+    def get_new_screen_number(self):
+        return self.new_screen_number
         
-    def get_default_screen(self):
-        return self.default_screen
-        
-    def set_default_screen(self, screen_number):
+    def set_new_screen_number(self, screen_number):
         if isinstance(screen_number, int):
-            self.default_screen = screen_number
+            self.new_screen_number = screen_number
             return True
             
         return False
+        
+    def get_current_screen(self):
+        return self.current_screen
+        
+    def set_current_screen(self, screen):    
+        self.current_screen = screen
+        return True
         
     def get_game_path(self):
         return self.game_path
