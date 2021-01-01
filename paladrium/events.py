@@ -8,52 +8,54 @@
 
 import pygame
 
+
+### CONSTANTS
+
+# Paladrium events
+STARTGAME  = 1000
+QUITGAME   = 1001
+LOADGAME   = 1002
+RESOLUTION = 1003
+NEWTITLE   = 1004
+
+
 ### CLASSES & FUNCTIONS
 
 ##
-# Class: EventHandler()
+# Class: Event()
 # Parent: none
-# Defines and handles all pygame.USEREVENTS
 ##
-
-class EventHandler():
+class Event():
     
-    # event codes
-    MAINMENU   = 1000
-    NEWGAME    = 1001
-    STARTGAME  = 1002
-    QUITGAME   = 1003
-
     ##
     # Method: __init__
-    # Class: Settings()
-    # @param: none
+    # Class: Event()
+    # @param: (int) code
+    # @param: (mixed) data
     # @return: none
-    # Init all pygame.USEREVENTS
     ##
-    def __init__(self):
-        self.e_mainmenu = pygame.event.Event(pygame.USEREVENT, e_type=self.MAINMENU)
-        self.e_newgame = pygame.event.Event(pygame.USEREVENT, e_type=self.NEWGAME)
-        self.e_startgame = pygame.event.Event(pygame.USEREVENT, e_type=self.STARTGAME)
-        self.e_quitgame = pygame.event.Event(pygame.USEREVENT, e_type=self.QUITGAME)
-
+    def __init__(self, code, data):
+        
+        self.code = code
+        self.data = data
+        
     ##
-    # Method: collect_events
-    # Class: Settings()
+    # Method: __str__
+    # Class: Event()
     # @param: none
-    # @return: none
-    # Grabs all raised events and store it
+    # @return: (str) printstrings
     ##
-    def collect_events(self):
-        # grab pygame events (empties queue)
-        self.events = pygame.event.get()
-    
-    ##
-    # Method: get_events
-    # Class: Settings()
-    # @param: none
-    # @return: none
-    # Returns all stored events
-    ##
-    def get_events(self):
-        return self.events
+    def __str__(self):
+        
+        # build up custom string for print(self) with event code
+        printstring = "Event [" + str(self.code) + "]"
+        
+        # plus extra information for some event codes
+        if self.code == NEWTITLE:
+            printstring += " [NEWTITLE]: "
+            
+        # and adding given event data
+        printstring += str(self.data)
+        
+        return printstring
+        
