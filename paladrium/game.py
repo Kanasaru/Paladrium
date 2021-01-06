@@ -125,8 +125,10 @@ class Game():
                     
         # game is running
         else:
-            # end loop to prevent crashing
-            self.exit_game = True
+            for event in pygame.event.get():
+                # quit Paladrium?
+                if event.type == pygame.QUIT:
+                    self.exit_game = True
             
     ##
     # Method: run_logic
