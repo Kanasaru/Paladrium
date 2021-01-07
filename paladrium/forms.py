@@ -8,8 +8,9 @@
 ### IMPORTS & INITIALISATON
 
 import pygame
-from . import events
 
+from . import debug
+from . import events
 
 ### CONSTANTS
 
@@ -52,8 +53,7 @@ class Title():
         elif isinstance(form_object, Textfield):
             self.all_sprites.add(form_object)
         else:
-            # for debugging
-            print("Title().add(): Given type is not allowed")
+            debug.Debug.msg("Title().add(): Given type is not allowed")
             
     ##
     # Method: get_events
@@ -224,8 +224,7 @@ class Button(pygame.sprite.Sprite):
             if attributes[0] in self.attr:
                 self.attr[attributes[0]] = attributes[1]
             else:
-                # for debugging
-                print("Button().set_attr(): Given key does not exist in attributes")
+                debug.Debug.msg("Button().set_attr(): Given key does not exist in attributes")
                 return False
                 
         # multiple attributes given?
@@ -234,11 +233,9 @@ class Button(pygame.sprite.Sprite):
                 if key in self.attr:
                     self.attr[key] = value
                 else:
-                    # for debugging
-                    print("Button().set_attr(): Given key from keys does not exist in attributes")
+                    debug.Debug.msg("Button().set_attr(): Given key from keys does not exist in attributes")
         else:
-            # for debugging
-            print("Button().set_attr(): Wrong format of given attributes")
+            debug.Debug.msg("Button().set_attr(): Wrong format of given attributes")
             return False
 
         return True
@@ -257,12 +254,10 @@ class Button(pygame.sprite.Sprite):
                 if key in self.attr:
                     return self.attr[key]
                 else:
-                    # for debugging
-                    print("Button().get_attr(): Given key does not exist in attributes")
+                    debug.Debug.msg("Button().get_attr(): Given key does not exist in attributes")
                     return False 
             else:
-                # for debugging
-                print("Button().get_attr(): Wrong type of given key")
+                debug.Debug.msg("Button().get_attr(): Wrong type of given key")
                 return False
         # no key? give them all we got
         else:
@@ -402,8 +397,7 @@ class Textfield(pygame.sprite.Sprite):
             if attributes[0] in self.attr:
                 self.attr[attributes[0]] = attributes[1]
             else:
-                # for debugging
-                print("Button().set_attr(): Given key does not exist in attributes")
+                debug.Debug.msg("Button().set_attr(): Given key does not exist in attributes")
                 return False
                 
         # multiple attributes given?
@@ -412,11 +406,9 @@ class Textfield(pygame.sprite.Sprite):
                 if key in self.attr:
                     self.attr[key] = value
                 else:
-                    # for debugging
-                    print("Button().set_attr(): Given key from keys does not exist in attributes")
+                    debug.Debug.msg("Button().set_attr(): Given key from keys does not exist in attributes")
         else:
-            # for debugging
-            print("Button().set_attr(): Wrong format of given attributes")
+            debug.Debug.msg("Button().set_attr(): Wrong format of given attributes")
             return False
 
         return True
@@ -435,12 +427,10 @@ class Textfield(pygame.sprite.Sprite):
                 if key in self.attr:
                     return self.attr[key]
                 else:
-                    # for debugging
-                    print("Button().get_attr(): Given key does not exist in attributes")
+                    debug.Debug.msg("Button().get_attr(): Given key does not exist in attributes")
                     return False 
             else:
-                # for debugging
-                print("Button().get_attr(): Wrong type of given key")
+                debug.Debug.msg("Button().get_attr(): Wrong type of given key")
                 return False
         # no key? give them all we got
         else:

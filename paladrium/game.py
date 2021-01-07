@@ -12,6 +12,7 @@ import pygame
 pygame.init()
 
 # Paladrium modules
+from . import debug
 from . import settings
 from . import forms
 from . import events
@@ -43,8 +44,9 @@ class Game():
         self.resolution_update = None
         
         # creating needed instances
+        self.debug    = debug.Debug(debug.LOUD)
         self.settings = settings.Settings()
-        self.clock = pygame.time.Clock()
+        self.clock    = pygame.time.Clock()
         
         # build main window
         pygame.display.set_mode(self.settings.get_display_resolution())
@@ -109,7 +111,7 @@ class Game():
                     self.exit_game = True
                     
                 # print every event for debugging
-                print(event)
+                debug.Debug.msg(event)
                 
             # clear title event queue
             self.settings.get_current_title().clear_events()
@@ -129,6 +131,7 @@ class Game():
                 # quit Paladrium?
                 if event.type == pygame.QUIT:
                     self.exit_game = True
+                    debug.Debug.msg("PyGame QUIT")
             
     ##
     # Method: run_logic
@@ -451,8 +454,7 @@ class Game():
             title.add(b_back)
             
         else:
-            # for debugging if given title does not exist
-            print("Game().build_title(): Given title does not exist")
+            debug.Debug.msg("Game().build_title(): Given title does not exist")
             
         return title
      

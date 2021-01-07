@@ -6,8 +6,8 @@
 
 ### IMPORTS & INITIALISATON
 
+from . import debug
 from . import forms
-
 
 ### CONSTANTS
 
@@ -81,8 +81,7 @@ class Settings():
         if isinstance(title, forms.Title):
             self.current_title = title
         else:
-            # for debugging
-            print("Settings().set_current_title(): Only type (forms.Title) allowed")
+            debug.Debug.msg("Settings().set_current_title(): Only type (forms.Title) allowed")
             return False
         
         return True
@@ -164,8 +163,7 @@ class Settings():
             self.fps = fps
             return True
         else:
-            # for debugging
-            print("Settings().set_fps(): Only type (int) allowed")
+            debug.Debug.msg("Settings().set_fps(): Only type (int) allowed")
             return False
     
     ##
@@ -237,10 +235,8 @@ class Settings():
                 self.display_resolution = resolution
                 return True
             else:
-                # for debugging
-                print("Settings().set_display_resolution(): Only type (int) in given resolution allowed")
+                debug.Debug.msg("Settings().set_display_resolution(): Only type (int) in given resolution allowed")
         else:
-            # for debugging
-            print("Settings().set_display_resolution(): Given resolution has to be a (tuple) with len = 2")
+            debug.Debug.msg("Settings().set_display_resolution(): Given resolution has to be a (tuple) with len = 2")
                 
         return False
