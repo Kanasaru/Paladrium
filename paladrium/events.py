@@ -8,6 +8,7 @@
 
 import pygame
 
+from . import debug
 
 ### CONSTANTS
 
