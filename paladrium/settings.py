@@ -59,6 +59,8 @@ class Settings():
         ### MENU
         self.current_title = None
         
+        self.set_display_resolution(self.display_resolution)
+        
     ##
     # Method: is_resolution
     # Class: Settings()
@@ -225,6 +227,7 @@ class Settings():
     # @return: (bool)
     ##
     def set_display_resolution(self, resolution):
+        global DEBUGMODE
         
         # check if given resolution is ok
         if isinstance(resolution, tuple) and len(resolution) == 2:

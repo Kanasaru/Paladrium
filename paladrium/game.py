@@ -44,7 +44,7 @@ class Game():
         self.resolution_update = None
         
         # creating needed instances
-        self.debug    = debug.Debug(debug.LOUD)
+        self.debug    = debug.Debug()
         self.settings = settings.Settings()
         self.clock    = pygame.time.Clock()
         
@@ -124,6 +124,11 @@ class Game():
                 # quit Paladrium?
                 if event.type == pygame.QUIT:
                     self.exit_game = True
+                
+                # toggle debug?
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_F3:
+                        self.debug.toggle()
                     
         # game is running
         else:
@@ -146,8 +151,8 @@ class Game():
             # resolutin changed?
             if self.resolution_update is not None:
                 # change display mode and update settings
-                pygame.display.set_mode(self.resolution_update)
                 self.settings.set_display_resolution(self.resolution_update)
+                pygame.display.set_mode(self.settings.get_display_resolution())
                 # rebuild title
                 self.settings.set_current_title(self.build_title(titles.RESOLUTION))
                 # all done so prevent updating it again
@@ -162,6 +167,8 @@ class Game():
                 
             # run logic of current title
             self.settings.get_current_title().run_logic()
+        
+        self.debug.run_logic()
             
     ##
     # Method: render
@@ -175,6 +182,9 @@ class Game():
         if not self.game_running:
             self.settings.get_current_title().render()
         
+        if debug.Debug.is_loud():
+            self.debug.render()
+            
         # show what we got
         pygame.display.flip()
         
@@ -198,7 +208,7 @@ class Game():
     def build_title(self, identifier):
         
         # create a title
-        title = forms.Title(self.settings.color('background'))
+        title = forms.Title(self.settings.get_display_resolution(), self.settings.color('background'))
         
         # build up Paladrium headline
         attr = {

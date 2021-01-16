@@ -29,8 +29,14 @@ class Title():
     # @param: (tuple) bg_color
     # @return: none
     ##
-    def __init__(self, bg_color):
+    def __init__(self, resolution, bg_color, position=(0, 0), transparent=255):
         
+        # set title surface
+        self.surface = pygame.Surface(resolution)
+        self.surface.set_alpha(transparent)
+        self.position = position
+        
+        # set title background color
         self.bg_color = bg_color
         
         # collecting all sprites of title in a group
@@ -51,6 +57,8 @@ class Title():
         if isinstance(form_object, Button):
             self.all_sprites.add(form_object)
         elif isinstance(form_object, Textfield):
+            self.all_sprites.add(form_object)
+        elif isinstance(form_object, Text):
             self.all_sprites.add(form_object)
         else:
             debug.Debug.msg("Title().add(): Given type is not allowed")
@@ -115,10 +123,12 @@ class Title():
     def render(self):
         
         # fill display with background color
-        pygame.display.get_surface().fill(self.bg_color)
+        self.surface.fill(self.bg_color)
         
         # draw every forms object in sprite group
-        self.all_sprites.draw(pygame.display.get_surface())
+        self.all_sprites.draw(self.surface)
+        
+        pygame.Surface.blit(pygame.display.get_surface(), self.surface, self.position)
         
         
 ##
@@ -475,3 +485,141 @@ class Textfield(pygame.sprite.Sprite):
     ##
     def get_dimensions(self):
         return self.image.get_size()
+
+##
+# Class: Textfield()
+# Parent: pygame.sprite.Sprite()
+##
+class Text(pygame.sprite.Sprite):
+    
+    def __init__(self, attributes=None):
+        
+        # init parent
+        pygame.sprite.Sprite.__init__(self)
+        
+        # creating empty event queue
+        self.events = []
+        
+        # set attributes standard
+        self.attr = {
+            "pos-x":            0,
+            "pos-y":            0,
+            "text":             "",
+            "text-font":        "assets/Cinzel-Medium.ttf",
+            "text-size":        20,
+            "text-color":       (255, 255, 255)
+        }
+        
+        # override attributes
+        if attributes is not None:
+            self.set_attr(attributes)
+        
+        # load font
+        self.font = pygame.font.Font(self.attr["text-font"], self.attr["text-size"])
+
+        # create image by font size
+        text_width, text_height = self.font.size(self.attr["text"])
+        self.image = pygame.Surface((text_width, text_height))
+        self.image.set_colorkey((0, 0, 0))
+        
+        # draw text into center
+        self.rect = self.image.get_rect(topleft=(self.attr["pos-x"], self.attr["pos-y"]))
+        
+        text_surf = self.font.render(self.attr["text"], True, self.attr["text-color"])
+        text_rect = text_surf.get_rect()
+        
+        # blit text onto image
+        self.image.blit(text_surf, text_rect)
+        
+    ##
+    # Method: set_attr
+    # Class: Textfield()
+    # @param: (tuple) (dict) attributes
+    # @return: (bool)
+    ##
+    def set_attr(self, attributes):
+        
+        # single attribute given?
+        if isinstance(attributes, tuple) and len(attributes) == 2:
+            if attributes[0] in self.attr:
+                self.attr[attributes[0]] = attributes[1]
+            else:
+                debug.Debug.msg("Button().set_attr(): Given key does not exist in attributes")
+                return False
+                
+        # multiple attributes given?
+        elif isinstance(attributes, dict):
+            for key, value in attributes.items():
+                if key in self.attr:
+                    self.attr[key] = value
+                else:
+                    debug.Debug.msg("Button().set_attr(): Given key from keys does not exist in attributes")
+        else:
+            debug.Debug.msg("Button().set_attr(): Wrong format of given attributes")
+            return False
+
+        return True
+
+    ##
+    # Method: set_attr
+    # Class: Textfield()
+    # @param: (optional) (str) key
+    # @return: (mixed) (dict) (bool)
+    ##
+    def get_attr(self, key=None):
+        
+        # key is given
+        if key is not None:
+            if isinstance(key, str):
+                if key in self.attr:
+                    return self.attr[key]
+                else:
+                    debug.Debug.msg("Button().get_attr(): Given key does not exist in attributes")
+                    return False 
+            else:
+                debug.Debug.msg("Button().get_attr(): Wrong type of given key")
+                return False
+        # no key? give them all we got
+        else:
+            return self.attr
+            
+    ##
+    # Method: get_events
+    # Class: Textfield()
+    # @param: none
+    # @return: (list) self.events
+    ##
+    def get_events(self):
+        return self.events
+        
+    ##
+    # Method: clear_events
+    # Class: Textfield()
+    # @param: none
+    # @return: none
+    ##
+    def clear_events(self):
+        
+        # cleaning own event queue
+        self.events.clear()
+        
+    ##
+    # Method: handle_event
+    # Class: Textfield()
+    # @param: (events.Event) event
+    # @return: none
+    ##
+    def handle_event(self, event):
+        
+        # nothing to do for just text
+        return
+        
+    ##
+    # Method: get_dimensions
+    # Class: Textfield()
+    # @param: none
+    # @return: (tuple)
+    ##
+    def get_dimensions(self):
+        return self.image.get_size()
+        
