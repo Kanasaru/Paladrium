@@ -4,7 +4,7 @@
 # GPL 3.0 License                       #
 #########################################
 
-import paladrium
+import paladrium.game
 
 def main():
     game = paladrium.game.Game()

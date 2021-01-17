@@ -6,26 +6,17 @@
 
 ### IMPORTS & INITIALISATON
 
-from . import debug
-from . import forms
+import mpos.helpers.debug as debug
+import mpos.forms
+
+from paladrium.logger import log
 
 ### CONSTANTS
 
-
 ### CLASSES & FUNCTIONS
 
-##
-# Class: Settings()
-# Parent: none
-##
 class Settings():
     
-    ##
-    # Method: __init__
-    # Class: Settings()
-    # @param: none
-    # @return: none
-    ##
     def __init__(self):
         
         ### BASIC INFORMATION
@@ -53,7 +44,7 @@ class Settings():
         
         ### FONTS
         # standard font
-        self.font_std      = "assets/Cinzel-Medium.ttf"
+        self.font_std      = "assets/fonts/Cinzel-Medium.ttf"
         self.font_size_std = 20
         
         ### MENU
@@ -61,119 +52,53 @@ class Settings():
         
         self.set_display_resolution(self.display_resolution)
         
-    ##
-    # Method: is_resolution
-    # Class: Settings()
-    # @param: (tuple) resolution
-    # @return: (bool)
-    ##
     def is_resolution(self, resolution):
         if resolution == self.display_resolution:
             return True
         else:
             return False
-        
-    ##
-    # Method: set_current_title
-    # Class: Settings()
-    # @param: (forms.Title) title
-    # @return: (bool)
-    ##
+            
     def set_current_title(self, title):
-        if isinstance(title, forms.Title):
+        if isinstance(title, mpos.forms.title.Title):
             self.current_title = title
         else:
-            debug.Debug.msg("Settings().set_current_title(): Only type (forms.Title) allowed")
+            log.info("Settings().set_current_title(): Only type (forms.Title) allowed")
             return False
         
         return True
         
-    ##
-    # Method: get_current_title
-    # Class: Settings()
-    # @param: none
-    # @return: (bool) (forms.Title)
-    ##
     def get_current_title(self):
         if self.current_title is not None:
             return self.current_title
         
         return False
-
-    ##
-    # Method: get_font_std
-    # Class: Settings()
-    # @param: none
-    # @return: (str)
-    ##
+        
     def get_font_std(self):
         return self.font_std
-    
-    ##
-    # Method: get_font_size_std
-    # Class: Settings()
-    # @param: none
-    # @return: (int)
-    ##
+        
     def get_font_size_std(self):
         return self.font_size_std
-    
-    ##
-    # Method: get_game_title
-    # Class: Settings()
-    # @param: none
-    # @return: (str)
-    ##
+        
     def get_game_title(self):
         return self.game_title
-    
-    ##
-    # Method: get_game_version
-    # Class: Settings()
-    # @param: none
-    # @return: (str)
-    ##
+        
     def get_game_version(self):
         return self.game_version
-    
-    ##
-    # Method: get_game_author
-    # Class: Settings()
-    # @param: none
-    # @return: (str)
-    ##
+        
     def get_game_author(self):
         return self.game_author
-
-    ##
-    # Method: get_fps
-    # Class: Settings()
-    # @param: none
-    # @return: (int)
-    ##
+        
     def get_fps(self):
         return self.fps
-    
-    ##
-    # Method: set_fps
-    # Class: Settings()
-    # @param: (int) fps
-    # @return: (bool)
-    ##
+        
     def set_fps(self, fps):
         if isinstance(fps, int):
             self.fps = fps
             return True
         else:
-            debug.Debug.msg("Settings().set_fps(): Only type (int) allowed")
+            log.info("Settings().set_fps(): Only type (int) allowed")
             return False
-    
-    ##
-    # Method: color
-    # Class: Settings()
-    # @param: (str) color_name
-    # @return: (tulpe) or (bool)
-    ##
+            
     def color(self, color_name):
         if color_name == 'white':
             return self.color_white
@@ -195,14 +120,7 @@ class Settings():
             return self.color_link
             
         return False
-    
-    ##
-    # Method: get_display_resolution
-    # Class: Settings()
-    # @param: (bool) width
-    # @param: (bool) height
-    # @return: (tulpe) or (int)
-    ##
+        
     def get_display_resolution(self, width=True, height=True):
         
         # get current resolution
@@ -219,13 +137,7 @@ class Settings():
         # give everything
         else:
             return self.display_resolution
-    
-    ##
-    # Method: set_display_resolution
-    # Class: Settings()
-    # @param: (tulpe) resolution
-    # @return: (bool)
-    ##
+            
     def set_display_resolution(self, resolution):
         global DEBUGMODE
         
@@ -238,8 +150,10 @@ class Settings():
                 self.display_resolution = resolution
                 return True
             else:
-                debug.Debug.msg("Settings().set_display_resolution(): Only type (int) in given resolution allowed")
+                log.info("Settings().set_display_resolution(): Only type (int) in given resolution allowed")
         else:
-            debug.Debug.msg("Settings().set_display_resolution(): Given resolution has to be a (tuple) with len = 2")
+            log.info("Settings().set_display_resolution(): Given resolution has to be a (tuple) with len = 2")
                 
         return False
+        
+settings = Settings()
