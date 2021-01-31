@@ -1,3 +1,10 @@
+"""This module contains and provides logging functionality
+
+.. note:: https://github.com/Kanasaru/Paladrium
+.. note:: exports logging object log
+.. note:: raises no exceptions
+
+"""
 import logging
 import mpos.helpers.logger
 
@@ -12,7 +19,9 @@ fh.setLevel(logging.DEBUG)
 
 log.addHandler(fh)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 fh.setFormatter(formatter)
 
 log.addHandler(fh)

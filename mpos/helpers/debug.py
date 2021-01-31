@@ -1,220 +1,133 @@
-#########################################
-# MPoS - just a library for development #
-#########################################
+"""This module contains constants, functions and classes for
+mpos.helpers.debug handling
 
-### IMPORTS & INITIALISATON
+:class Debugger: creates a debug info object
 
+.. note:: exports no objects
+.. note:: raises no exceptions
+
+"""
 import pygame
-
+import mpos.msg
 import mpos.helpers.time
 from mpos.helpers.logger import log
 
-### CONSTANTS
+MODUL = __name__
 
-QUIET      = 0
-LOUD       = 1
+QUIET = 0
+LOUD = 1
 
-### GLOBALS
-
-### CLASSES & FUNCTIONS
-        
-class DebugScreen():
+class Debugger():
+    """This class provides a debug info object.
     
-    def __init__(self, attributes=None):
+    :method __init__: sets up the debugger
+    :method toggle: toggles the debug mode
+    :method set_mode: sets the debug mode
+    :method get_mode: get current debug mode
+    :method is_mode: checks if debug mode is as assumed
+    :method get_str_timer: formats debug timer in counter string
+    
+    """
+    def __init__(self, mode=QUIET):
+        """Sets up the debugger.
         
-        # set attributes standard
-        self.attr = {
-            "pos_x":            0,
-            "pos_y":            0,
-            "width":            0,
-            "height":           0,
-            "text_font":        "assets/fonts/RobotoMono-VariableFont_wght.ttf",
-            "font_size":        14,
-            "font_color":       (0, 0 ,0),
-            "background_color": (255, 255, 255),
-            "colorkey":         None,
-            "transparency":     60,
-            "mode":             QUIET
-        }
-            
-        # override attributes
-        if attributes is not None:
-            self.set_attr(attributes)
+        :param mode: contains debug mode
+        :type: int
         
-        # collecting all sprites of title in a group
-        self.all_sprites = pygame.sprite.Group()
+        :Example:
         
-        self.add(DebugTimer())
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger(mpos.helpers.debug.LOUD)
         
-    def set_attr(self, attributes):
+        """
+        self.NAME = self.__class__.__name__
         
-        # single attribute given?
-        if isinstance(attributes, tuple) and len(attributes) == 2:
-            if attributes[0] in self.attr:
-                self.attr[attributes[0]] = attributes[1]
-            else:
-                log.info("Debugger().set_attr(): Given key does not exist in attributes")
-                return False
-                
-        # multiple attributes given?
-        elif isinstance(attributes, dict):
-            for key, value in attributes.items():
-                if key in self.attr:
-                    self.attr[key] = value
-                else:
-                    log.info("Debugger().set_attr(): Given key from keys does not exist in attributes")
-        else:
-            log.info("Debugger().set_attr(): Wrong format of given attributes")
-            return False
-
-        return True
+        self.set_mode(mode)
+        self.timer = pygame.time.get_ticks()
         
-    def get_attr(self, key=None):
-        
-        # key is given
-        if key is not None:
-            if isinstance(key, str):
-                if key in self.attr:
-                    return self.attr[key]
-                else:
-                    log.info("Debugger().get_attr(): Given key does not exist in attributes")
-                    return False 
-            else:
-                log.info("Debugger().get_attr(): Wrong type of given key")
-                return False
-        # no key? give them all we got
-        else:
-            return self.attr
-            
     def toggle(self):
+        """Toggles the debug mode.
         
-        if self.attr["mode"] == LOUD:
-            self.attr["mode"] = QUIET
+        :Example:
+        
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger()
+        >>> a.toggle()
+        
+        """
+        if self.mode == LOUD:
+            self.mode = QUIET
         else:
-            self.attr["mode"] = LOUD
+            self.mode = LOUD
             
     def set_mode(self, mode):
+        """Sets the debug mode.
         
+        :param mode: debug mode
+        :type: int
+        
+        :Example:
+        
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger()
+        >>> a.set_mode(mpos.helpers.debug.LOUD)
+        
+        """
         if mode == QUIET:
-            self.attr["mode"] = QUIET
+            self.mode = QUIET
         elif mode == LOUD:
-            self.attr["mode"] = LOUD
+            self.mode = LOUD
         else:
-            log.info("Unknown mode for debugging")
-            mode = QUIET
+            log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_MODE))
+            self.mode = QUIET
         
     def get_mode(self):
+        """Get current debug mode.
         
-        return self.attr["mode"]
+        :returns: current debug mode
+        :rtype: int
+        
+        :Example:
+        
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger()
+        >>> mode = a.get_mode()
+        
+        """
+        return self.mode
             
     def is_mode(self, mode):
+        """Checks if debug mode is as assumed.
         
-        if mode == self.attr["mode"]:
+        :returns: positive if matching
+        :rtype: bool
+        
+        :Example:
+        
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger()
+        >>> b = a.is_mode(mpos.helpers.debug.LOUD)
+        
+        """
+        if mode == self.mode:
             return True
         else:
             return False
             
-    def add(self, sprite):
+    def get_str_timer(self):
+        """Formats debug timer in counter string.
         
-        self.all_sprites.add(sprite)
+        :returns: formatted debug timer
+        :rtype: str
         
-    def handle_event(self, event):
-        return
-            
-    def run_logic(self):
+        :Example:
         
-        self.all_sprites.update()
+        >>> import mpos.helpers.debug
+        >>> a = mpos.helpers.debug.Debugger()
+        >>> b = a.get_str_timer()
         
-    def render(self, surface):
-        
-        if self.attr["mode"] == LOUD:
-        
-            self.surface = pygame.Surface((self.attr["width"], self.attr["height"]))
-            
-            self.surface.fill(self.attr["background_color"])
-            
-            if self.attr["colorkey"] is not None:
-                self.surface.set_colorkey(self.attr["colorkey"])
-            
-            self.surface.set_alpha(self.attr["transparency"])
-            
-            self.all_sprites.draw(self.surface)
-            
-            pygame.Surface.blit(surface, self.surface, (self.attr["pos_x"], self.attr["pos_y"]))
-        
-        
-class DebugTimer(pygame.sprite.Sprite):
-    
-    def __init__(self, attributes=None):
-        
-        # init parent
-        pygame.sprite.Sprite.__init__(self)
-        
-        self.timer = pygame.time.get_ticks()
-        
-        # creating empty event queue
-        self.events = []
-        
-        # set attributes standard
-        self.attr = {
-            "pos_x":            0,
-            "pos_y":            0,
-            "text":             "DebugTimer: ",
-            "timer":            self.get_time(),
-            "text_font":        "assets/fonts/BungeeShade-Regular.ttf",
-            "font_size":        20,
-            "font_color":       (255, 255, 255)
-        }
-        
-        # override attributes
-        if attributes is not None:
-            self.set_attr(attributes)
-        
-        # load font
-        self.font = pygame.font.Font(self.attr["text_font"], self.attr["font_size"])
-
-        self.create_sprite()
-        
-    def create_sprite(self):
-        
-        text = self.attr["text"] + self.attr["timer"]
-        
-        # create image by font size
-        text_width, text_height = self.font.size(text)
-        self.image = pygame.Surface((text_width, text_height))
-        self.image.set_colorkey((0, 0, 0))
-        # draw text into center
-        self.rect = self.image.get_rect(topleft=(self.attr["pos_x"], self.attr["pos_y"]))
-        
-        text_surf = self.font.render(text, True, self.attr["font_color"])
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        
-        # blit text onto image
-        self.image.blit(text_surf, text_rect)
-        
-        
-    def get_time(self):
+        """
         time_diff = pygame.time.get_ticks()-self.timer
         seconds = time_diff//1000
         
         return mpos.helpers.time.seconds_to_clock(seconds)
-    
-    def update(self):
-        
-        self.attr["timer"] = self.get_time()
-        self.create_sprite()
-        
-    def get_events(self):
-        return self.events
-        
-    def clear_events(self):
-        
-        # cleaning own event queue
-        self.events.clear()
-        
-    def handle_event(self, event):
-        return
-        
-    def get_dimensions(self):
-        return self.image.get_size()
-        

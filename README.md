@@ -10,7 +10,7 @@ Just a try for developing a RPG in python with pygame
 
 ## What is the current version?
 
-Current is 0.1 (alpha).
+Current is 0.2 (alpha).
 
 (alpha) = not playable
 (beta)  = playable, but with bugs
@@ -21,8 +21,8 @@ Current is 0.1 (alpha).
 
 #### Bugs
 
-* some, but nothing I found yet or liked to fix
+* nothing found. If you do, tell me!
 
 ## Contributions
 
-* Initial source code for class Button() by skrx from stackoverflow.com (https://stackoverflow.com/users/6220679/skrx)
+* contributions are part of the source code

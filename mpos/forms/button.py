@@ -1,180 +1,379 @@
-#########################################
-# MPoS - just a library for development #
-#########################################
+"""This module contains constants, functions and classes for
+mpos.forms.button handling
 
-### IMPORTS & INITIALISATON
+:class Button: creates a button
 
-from mpos.helpers.logger import log
+.. note:: exports no objects
+.. note:: raises no exceptions
+.. todo:: get rid of general paths
+
+"""
 import pygame
+import mpos.msg
+import mpos.helpers.spritesheet
+from mpos.helpers.logger import log
 
-### CONSTANTS
-
-### GLOBALS
-
-### CLASSES & FUNCTIONS
+MODUL = __name__
 
 class Button(pygame.sprite.Sprite):
+    """This class provides and manages the general button of
+    mpos.forms.button that can be added to a title.
     
+    :method __init__: sets up the basic button
+    :method set_attr: sets one or multiple button attributes
+    :method get_attr: returns button attribute(s)
+    :method update: updates button by own attributes values
+    :method get_events: returns all events
+    :method clear_events: clears the event list
+    :method handle_event: handles an event
+    :method get_dimensions: returns button size
+    :method width: returns button width
+    :method height: returns button height
+    
+    .. note: initial source code by skrx from stackoverflow.com
+        (https://stackoverflow.com/users/6220679/skrx)
+    
+    """
     def __init__(self, attributes=None):
+        """Sets up the basic button.
         
-        # init parent
+        :param attributes: contains settings of the textbox
+        :type attributes: dict
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> b = mpos.forms.button.Button()
+        >>> args = {"width": 100, "height": 20}
+        >>> a = mpos.forms.button.Button(args)
+        
+        """
+        self.NAME = self.__class__.__name__
+        
         pygame.sprite.Sprite.__init__(self)
         
-        # creating empty event queue
         self.events = []
-        
-        # set attributes standard
         self.attr = {
-            "pos-x":            0,
-            "pos-y":            0,
-            "width":            220,
-            "height":           60,
-            "text":             "",
-            "callback_event":   None,
-            "clickable":        True,
-            "img":              "assets/sprites/button.png",
-            "img-hover":        "assets/sprites/button-clicked.png",
-            "img-down":         "assets/sprites/button-clicked.png",
-            "img-disabled":     "assets/sprites/button-disabled.png",
-            "text-font":        "assets/fonts/Cinzel-Medium.ttf",
-            "text-size":        20,
-            "text-color":       (0, 0 ,0),
-            "text-color-hover": (120, 117, 98),
-            "text-color-down":  (120, 117, 98),
-            "shadow":           (0, 0)
+            "pos_x": 0,
+            "pos_y": 0,
+            "width": 220,
+            "height": 60,
+            "text": "",
+            "callback_event": None,
+            "clickable": True,
+            "spritesheet": None,
+            "text_font": "assets/fonts/Cinzel-Medium.ttf",
+            "font_size": 20,
+            "font_color": (0, 0 ,0),
+            "font_color_hover": (120, 117, 98),
+            "font_color_down": (120, 117, 98),
+            "font_color_disabled": (0, 0 ,0),
+            "bg_color": (255, 255, 255),
+            "colorkey": (0, 0, 0),
         }
-        
-        # override attributes
         if attributes is not None:
             self.set_attr(attributes)
         
-        # load font
-        self.font = pygame.font.Font(self.attr["text-font"], self.attr["text-size"])
+        self.font = pygame.font.Font(
+            self.attr["text_font"],
+            self.attr["font_size"]
+        )
         
-        # load button images and convert alpha
-        self.image_normal   = pygame.image.load(self.attr["img"]).convert_alpha()
-        self.image_hover    = pygame.image.load(self.attr["img-hover"]).convert_alpha()
-        self.image_down     = pygame.image.load(self.attr["img-down"]).convert_alpha()
-        self.image_disabled = pygame.image.load(self.attr["img-disabled"]).convert_alpha()
+        self.surf_images = {
+            "image_normal": None,
+            "image_hover": None,
+            "image_down": None,
+            "image_disabled": None
+        }
         
-        # scale button images to given button size
-        self.image_normal   = pygame.transform.scale(self.image_normal, (self.attr["width"], self.attr["height"]))
-        self.image_hover    = pygame.transform.scale(self.image_hover, (self.attr["width"], self.attr["height"]))
-        self.image_down     = pygame.transform.scale(self.image_down, (self.attr["width"], self.attr["height"]))
-        self.image_disabled = pygame.transform.scale(self.image_disabled, (self.attr["width"], self.attr["height"]))
-
-        # set current image
+        for key in self.surf_images:
+            self.surf_images[key] = pygame.Surface((
+                self.attr["width"],
+                self.attr["height"]
+            ))
+            self.surf_images[key].fill(self.attr["bg_color"])
+            self.surf_images[key].set_colorkey(self.attr["colorkey"])
+        
+        if self.attr["spritesheet"] is not None:
+            self.spritesheet = mpos.helpers.spritesheet.SpriteSheet(
+                self.attr["spritesheet"]
+            )
+            
+            self.surf_images["image_normal"] = self.spritesheet.image_at(
+                (
+                    0,
+                    0,
+                    self.attr["width"],
+                    self.attr["height"]
+                ),
+                self.attr["colorkey"]
+            )
+            self.surf_images["image_hover"] = self.spritesheet.image_at(
+                (
+                    0,
+                    self.attr["height"],
+                    self.attr["width"],
+                    self.attr["height"]
+                ),
+                self.attr["colorkey"]
+            )
+            self.surf_images["image_down"] = self.spritesheet.image_at(
+                (
+                    0,
+                    self.attr["height"]*2,
+                    self.attr["width"],
+                    self.attr["height"]
+                ),
+                self.attr["colorkey"]
+            )
+            self.surf_images["image_disabled"] = self.spritesheet.image_at(
+                (
+                    0,
+                    self.attr["height"]*3,
+                    self.attr["width"],
+                    self.attr["height"]
+                ),
+                self.attr["colorkey"]
+            )
+        
         if self.attr["clickable"]:
-            self.image = self.image_normal
+            self.image = self.surf_images["image_normal"]
         else:
-            self.image = self.image_disabled
+            self.image = self.surf_images["image_disabled"]
         
-        # set rect
-        self.rect = self.image.get_rect(topleft=(self.attr["pos-y"], self.attr["pos-x"]))
+        self.rect = self.image.get_rect(topleft=(
+            self.attr["pos_y"],
+            self.attr["pos_x"]
+        ))
         
-        # draw text into center
         image_center_x, image_center_y = self.image.get_rect().center
 
-        text_surf       = self.font.render(self.attr["text"], True, self.attr["text-color"])
-        text_surf_hover = self.font.render(self.attr["text"], True, self.attr["text-color-hover"])
-        text_surf_down  = self.font.render(self.attr["text"], True, self.attr["text-color-down"])
+        text_surf = self.font.render(
+            self.attr["text"],
+            True,
+            self.attr["font_color"]
+        )
+        text_surf_hover = self.font.render(
+            self.attr["text"],
+            True,
+            self.attr["font_color_hover"]
+        )
+        text_surf_down  = self.font.render(
+            self.attr["text"],
+            True,
+            self.attr["font_color_down"]
+        )
+        text_surf_disabled  = self.font.render(
+            self.attr["text"],
+            True,
+            self.attr["font_color_disabled"]
+        )
         
-        # set text rect with shadow
-        shadow = self.attr["shadow"]
+        text_rect = text_surf.get_rect(center=(
+            image_center_x,
+            image_center_y
+        ))
         
-        text_rect = text_surf.get_rect(center=(image_center_x - shadow[1], image_center_y - shadow[0]))
+        self.surf_images["image_normal"].blit(text_surf, text_rect)
+        self.surf_images["image_hover"].blit(text_surf_hover, text_rect)
+        self.surf_images["image_down"].blit(text_surf_hover, text_rect)
+        self.surf_images["image_disabled"].blit(text_surf_disabled, text_rect)
         
-        # blit text onto images
-        self.image_normal.blit(text_surf, text_rect)
-        self.image_hover.blit(text_surf_hover, text_rect)
-        self.image_down.blit(text_surf_hover, text_rect)
-        self.image_disabled.blit(text_surf, text_rect)
-        
-        # set current button state
         self.button_down = False
         
     def set_attr(self, attributes):
+        """Sets one or multiple attributes of the button.
         
-        # single attribute given?
+        :param attributes: contains one or more attributes
+        :type attributes: dict or tuple
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> args = {"width": 100, "height": 20}
+        >>> a.set_attr(args)
+        >>> a.set_attr(("pos_x", 20))
+        
+        """
         if isinstance(attributes, tuple) and len(attributes) == 2:
             if attributes[0] in self.attr:
                 self.attr[attributes[0]] = attributes[1]
             else:
-                log.info("Button().set_attr(): Given key does not exist in attributes")
+                log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
                 return False
-                
-        # multiple attributes given?
         elif isinstance(attributes, dict):
             for key, value in attributes.items():
                 if key in self.attr:
                     self.attr[key] = value
                 else:
-                    log.info("Button().set_attr(): Given key from keys does not exist in attributes")
+                    log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
         else:
-            logger.info("Button().set_attr(): Wrong format of given attributes")
+            log.info(mpos.msg.echo(MODUL, self.NAME, self.E_FORMAT))
             return False
-
+            
         return True
 
     def get_attr(self, key=None):
+        """Sets one or multiple attributes of the button.
         
-        # key is given
+        :param attributes: contains one or more attributes
+        :type attributes: dict or tuple
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> all_attr = a.get_attr()
+        >>> single_attr = a.get_attr("pos_x")
+        
+        """
         if key is not None:
             if isinstance(key, str):
                 if key in self.attr:
                     return self.attr[key]
                 else:
-                    log.info("Button().get_attr(): Given key does not exist in attributes")
+                    log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
                     return False 
             else:
-                log.info("Button().get_attr(): Wrong type of given key")
+                log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEYTYPE))
                 return False
-        # no key? give them all we got
         else:
             return self.attr
             
     def update(self):
+        """Updates button by its attributes.
         
-        # update position
-        self.rect.top = self.attr["pos-y"]
-        self.rect.left = self.attr["pos-x"]
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> a.update()
+        
+        """
+        self.rect.top = self.attr["pos_y"]
+        self.rect.left = self.attr["pos_x"]
         
     def get_events(self):
+        """Returns all button events and clears event queue.
+        
+        :returns: button event queue
+        :rtype: list
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> events = a.get_events()
+        
+        """
         return self.events
         
     def clear_events(self):
+        """Clears the event queue of the button.
         
-        # cleaning own event queue
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> a.clear_events()
+        
+        """
         self.events.clear()
     
     def handle_event(self, event):
+        """Handles a single event.
+                
+        :param event: event that is to be handled by button
+        :type event: pygame.event.Event
         
-        # just handle events if button is clickable
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> a = mpos.forms.button.Button()
+        >>> for event in pygame.event.get(): a.handle_event(event)
+        
+        """
         if self.attr["clickable"]:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos):
-                    self.image = self.image_down
+                    self.image = self.surf_images["image_down"]
                     self.button_down = True
-                    
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.rect.collidepoint(event.pos) and self.button_down:
-                    # raise the callback event if it has one
                     if self.attr["callback_event"] is not None:
                         self.events.append(self.attr["callback_event"])
-                    
-                    self.image = self.image_hover
+                    self.image = self.surf_images["image_hover"]
                 self.button_down = False
-                
             elif event.type == pygame.MOUSEMOTION:
                 collided = self.rect.collidepoint(event.pos)
                 if collided and not self.button_down:
-                    self.image = self.image_hover
+                    self.image = self.surf_images["image_hover"]
                 elif not collided:
-                    self.image = self.image_normal
-                    
-        # not clickable? tell the crowd
+                    self.image = self.surf_images["image_normal"]
         else:
-            self.image = self.image_disabled
+            self.image = self.surf_images["image_disabled"]
             
     def get_dimensions(self):
+        """Returns the dimension of the button.
+        
+        :returns: button width and height
+        :rtype: tuple
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> events = a.get_dimensions()
+        
+        """
         return self.image.get_size()
+        
+    def width(self):
+        """Returns the width of the button.
+        
+        :returns: button width
+        :rtype: int
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> events = a.width()
+        
+        """
+        return self.image.get_width()
+        
+    def height(self):
+        """Returns the height of the button.
+        
+        :returns: button height
+        :rtype: int
+        
+        :Example:
+        
+        >>> import pygame
+        >>> import mpos.forms
+        >>> pygame.init()
+        >>> a = mpos.forms.button.Button()
+        >>> events = a.height()
+        
+        """
+        return self.image.get_height()

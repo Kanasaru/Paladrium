@@ -1,170 +1,147 @@
-#########################################
-# Paladrium - a RPG Project             #
-# https://github.com/Kanasaru/Paladrium #
-# GPL 3.0 License                       #
-#########################################
+"""This module contains settings functionality
 
+:class Game: manages the game
 
-### IMPORTS & INITIALISATON
+.. note:: https://github.com/Kanasaru/Paladrium
 
-# PyGame
+"""
 import pygame
 pygame.init()
-
-# MPoS
 import mpos
-
-# Paladrium
+import paladrium.titles
 from paladrium.logger import log
 from paladrium.settings import settings
-import paladrium.titles
-
-### CONSTANTS
-
-
-### CLASSES & FUNCTIONS
 
 class Game():
+    """This class manages the game.
     
+    :method __init__: sets up the game
+    :method loop: starts the gaming loop
+    :method handle_events: handles game events
+    :method run_logic: runs all game logic
+    :method render: draws everything onto pygame display
+    :method exit: controls an exit
+    
+    """
     def __init__(self):
-        
-        # variables for event handling, logic and rendering
-        self.game_running      = False
-        self.exit_game         = False
-        self.new_title         = None
+        """Sets up the game."""
+        self.game_running = False
+        self.exit_game = False
+        self.new_title = None
         self.resolution_update = None
+        self.debugger = mpos.helpers.debug.Debugger()
         
         attr = {
-            "pos_x":            0,
-            "pos_y":            settings.get_display_resolution(False, True) - 100,
-            "width":            settings.get_display_resolution(True, False),
-            "height":           100
+            "pos_x": 0,
+            "pos_y": settings.get_display_resolution(False, True) - 100,
+            "width": settings.get_display_resolution(True, False),
+            "height": 100
         }
-        self.debug    = mpos.helpers.debug.DebugScreen(attr)
+        self.debug_screen = mpos.forms.title.Title(attr)
+        
+        attr = {
+            "text": self.debugger.get_str_timer(),
+            "font_color": (0, 0, 0),
+            "update_text_cb": getattr(self.debugger, 'get_str_timer')
+        }
+        self.debug_screen.add(mpos.forms.textbox.Textbox(attr))
         
         self.clock    = pygame.time.Clock()
         
-        # build main window
-        self.surface = pygame.display.set_mode(settings.get_display_resolution())
-        display_title = settings.get_game_title() + " - v" + settings.get_game_version() + " by " + settings.get_game_author()
+        self.surface = pygame.display.set_mode(
+            settings.get_display_resolution()
+        )
+        
+        display_title = settings.get_game_title() + " - v"
+        display_title += settings.get_game_version() + " by "
+        display_title += settings.get_game_author()
         pygame.display.set_caption(display_title)
         
-        # set current title
-        settings.set_current_title(paladrium.titles.build_title(paladrium.titles.MAIN))
+        settings.set_current_title(
+            paladrium.titles.build_title(paladrium.titles.MAIN)
+        )
         
-        # start the loop
         self.loop()
         
     def loop(self):
-        
-        # while no exit event is raised
+        """Starts the gaming loop."""
         while not self.exit_game:
             
-            # set framerate
             self.clock.tick(settings.get_fps())
             
-            # handle game events
             self.handle_events()
-            
-            # run game logic
             self.run_logic()
-            
-            # show everything
             self.render()
-        
-        # clean ending after exit event
+            
         self.exit()
         
     def handle_events(self):
-        
-        # if game is not running handle current title events
+        """Handles game events."""
         if not self.game_running:
-            # look up for events in current title
             for event in settings.get_current_title().get_events():
-                # load new title?
                 if event.code == paladrium.events.NEWTITLE:
                     self.new_title = event.data
-                # change display resolution?
                 elif event.code == paladrium.events.RESOLUTION:
                     self.resolution_update = event.data
-                # start a game?
                 elif event.code == paladrium.events.STARTGAME:
                     self.game_running = True
-                # quit Paladrium?
                 elif event.code == paladrium.events.QUITGAME:
                     self.exit_game = True
-                    
-                # print every event for debugging
                 log.info(event)
-                
-            # clear title event queue
             settings.get_current_title().clear_events()
             
-            # look up for pygame events
             for event in pygame.event.get():
-                # handle event by current title
                 settings.get_current_title().handle_event(event)
                 
-                # quit Paladrium?
                 if event.type == pygame.QUIT:
                     self.exit_game = True
-                
-                # toggle debug?
-                if event.type == pygame.KEYUP:
+                elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_F3:
-                        self.debug.toggle()
-                    
-        # game is running
+                        self.debugger.toggle()
         else:
             for event in pygame.event.get():
-                # quit Paladrium?
                 if event.type == pygame.QUIT:
                     self.exit_game = True
                     log.info("PyGame QUIT")
             
     def run_logic(self):
-        
-        # if game is not running run current title logic
+        """Runs all game logic."""
         if not self.game_running:
-            # resolutin changed?
             if self.resolution_update is not None:
-                # change display mode and update settings
                 settings.set_display_resolution(self.resolution_update)
-                pygame.display.set_mode(self.settings.get_display_resolution())
-                # rebuild title
-                settings.set_current_title(paladrium.titles.build_title(paladrium.titles.RESOLUTION))
-                # all done so prevent updating it again
+                pygame.display.set_mode(settings.get_display_resolution())
+                settings.set_current_title(
+                    paladrium.titles.build_title(paladrium.titles.RESOLUTION)
+                )
                 self.resolution_update = None
-            
-            # new title needed?
+                
             if self.new_title is not None:
-                # change current title to new title
-                settings.set_current_title(paladrium.titles.build_title(self.new_title))
-                # all done so prevent changing it again
+                settings.set_current_title(
+                    paladrium.titles.build_title(self.new_title)
+                )
                 self.new_title = None
                 
-            # run logic of current title
             settings.get_current_title().run_logic()
         
         attr = {
-            "pos_y":            settings.get_display_resolution(False, True) - 100,
-            "width":            settings.get_display_resolution(True, False),
+            "pos_y": settings.get_display_resolution(False, True) - 100,
+            "width": settings.get_display_resolution(True, False),
         }
-        self.debug.set_attr(attr)
-        self.debug.run_logic()
+        self.debug_screen.set_attr(attr)
+        self.debug_screen.run_logic()
             
     def render(self):
+        """Draws everything onto pygame display"""
+        self.surface.fill((0, 255, 0))
         
-        # if game is not running render current title
         if not self.game_running:
             settings.get_current_title().render(self.surface)
         
-        self.debug.render(self.surface)
+        if self.debugger.is_mode(mpos.helpers.debug.LOUD):
+            self.debug_screen.render(self.surface)
             
-        # show what we got
         pygame.display.flip()
         
     def exit(self):
-        
-        # exit pygame instance
+        """Controls an exit."""
         pygame.quit()

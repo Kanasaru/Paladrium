@@ -1,10 +1,10 @@
-#########################################
-# Paladrium - a RPG Project             #
-# https://github.com/Kanasaru/Paladrium #
-# GPL 3.0 License                       #
-#########################################
+"""This module contains events of Paladrium
 
-# Paladrium events
+.. note:: https://github.com/Kanasaru/Paladrium
+.. note:: exports no objects
+.. note:: raises no exceptions
+
+"""
 STARTGAME  = 1000
 QUITGAME   = 1001
 LOADGAME   = 1002
