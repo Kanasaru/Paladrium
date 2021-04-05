@@ -9,6 +9,7 @@ mpos.forms.textbox handling
 """
 import pygame
 import mpos.msg
+import mpos.helpers.attr
 from mpos.helpers.logger import log
 
 MODUL = __name__
@@ -83,23 +84,7 @@ class Textbox(pygame.sprite.Sprite):
         >>> a.set_attr(("pos_x", 20))
         
         """
-        if isinstance(attributes, tuple) and len(attributes) == 2:
-            if attributes[0] in self.attr:
-                self.attr[attributes[0]] = attributes[1]
-            else:
-                log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_KEY))
-                return False
-        elif isinstance(attributes, dict):
-            for key, value in attributes.items():
-                if key in self.attr:
-                    self.attr[key] = value
-                else:
-                    log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_KEY))
-        else:
-            log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_FORMAT))
-            return False
-
-        return True
+        return mpos.helpers.attr.set_attr(self.attr, attributes)
         
     def get_attr(self, key=None):
         """Returns one or all attribute(s) of the textbox.
@@ -117,18 +102,7 @@ class Textbox(pygame.sprite.Sprite):
         >>> single_attr = a.get_attr("pos_x")
         
         """
-        if key is not None:
-            if isinstance(key, str):
-                if key in self.attr:
-                    return self.attr[key]
-                else:
-                    log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_KEY))
-                    return False 
-            else:
-                log.info(mpos.msg.echo(MODUL, self.NAME, mpos.msg.E_KEYTYPE))
-                return False
-        else:
-            return self.attr
+        return mpos.helpers.attr.get_attr(self.attr, key)
             
     def update(self):
         """Updates textbox by its attributes.

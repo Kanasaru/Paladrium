@@ -10,6 +10,7 @@ mpos.forms.button handling
 """
 import pygame
 import mpos.msg
+import mpos.helpers.attr
 import mpos.helpers.spritesheet
 from mpos.helpers.logger import log
 
@@ -37,7 +38,7 @@ class Button(pygame.sprite.Sprite):
     def __init__(self, attributes=None):
         """Sets up the basic button.
         
-        :param attributes: contains settings of the textbox
+        :param attributes: contains settings of the button
         :type attributes: dict
         
         :Example:
@@ -98,7 +99,8 @@ class Button(pygame.sprite.Sprite):
         
         if self.attr["spritesheet"] is not None:
             self.spritesheet = mpos.helpers.spritesheet.SpriteSheet(
-                self.attr["spritesheet"]
+                self.attr["spritesheet"],
+                (self.attr["width"], self.attr["height"])
             )
             
             self.surf_images["image_normal"] = self.spritesheet.image_at(
@@ -200,23 +202,7 @@ class Button(pygame.sprite.Sprite):
         >>> a.set_attr(("pos_x", 20))
         
         """
-        if isinstance(attributes, tuple) and len(attributes) == 2:
-            if attributes[0] in self.attr:
-                self.attr[attributes[0]] = attributes[1]
-            else:
-                log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
-                return False
-        elif isinstance(attributes, dict):
-            for key, value in attributes.items():
-                if key in self.attr:
-                    self.attr[key] = value
-                else:
-                    log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
-        else:
-            log.info(mpos.msg.echo(MODUL, self.NAME, self.E_FORMAT))
-            return False
-            
-        return True
+        return mpos.helpers.attr.set_attr(self.attr, attributes)
 
     def get_attr(self, key=None):
         """Sets one or multiple attributes of the button.
@@ -234,18 +220,7 @@ class Button(pygame.sprite.Sprite):
         >>> single_attr = a.get_attr("pos_x")
         
         """
-        if key is not None:
-            if isinstance(key, str):
-                if key in self.attr:
-                    return self.attr[key]
-                else:
-                    log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEY))
-                    return False 
-            else:
-                log.info(mpos.msg.echo(MODUL, self.NAME, self.E_KEYTYPE))
-                return False
-        else:
-            return self.attr
+        return mpos.helpers.attr.get_attr(self.attr, key)
             
     def update(self):
         """Updates button by its attributes.

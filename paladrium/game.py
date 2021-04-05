@@ -11,6 +11,8 @@ import mpos
 import paladrium.titles
 from paladrium.logger import log
 from paladrium.settings import settings
+from paladrium.map.map import MAP_DICT
+from paladrium.map.fields import FIELD_DICT
 
 class Game():
     """This class manages the game.
@@ -59,6 +61,13 @@ class Game():
         
         settings.set_current_title(
             paladrium.titles.build_title(paladrium.titles.MAIN)
+        )
+        
+        self.map = mpos.map.map.Map(
+            MAP_DICT,
+            FIELD_DICT,
+            settings.get_display_resolution(),
+            "assets/sprites/fields_spritesheet.png"
         )
         
         self.loop()
@@ -122,7 +131,9 @@ class Game():
                 self.new_title = None
                 
             settings.get_current_title().run_logic()
-        
+        else:
+            self.map.run_logic()
+            
         attr = {
             "pos_y": settings.get_display_resolution(False, True) - 100,
             "width": settings.get_display_resolution(True, False),
@@ -136,7 +147,9 @@ class Game():
         
         if not self.game_running:
             settings.get_current_title().render(self.surface)
-        
+        else:
+            self.map.render(self.surface)
+            
         if self.debugger.is_mode(mpos.helpers.debug.LOUD):
             self.debug_screen.render(self.surface)
             
@@ -145,3 +158,14 @@ class Game():
     def exit(self):
         """Controls an exit."""
         pygame.quit()
+        
+    def load_map(self):
+        attr = {
+            "pos_x": 0,
+            "pos_y": 0,
+            "width": settings.get_display_resolution(True, False),
+            "height": settings.get_display_resolution(False, True),
+            "bg_color": (0, 0, 255),
+            "colorkey": (0, 0, 0)
+        }
+        self.map = paladrium.map.map.Map(self.map_file, attr)

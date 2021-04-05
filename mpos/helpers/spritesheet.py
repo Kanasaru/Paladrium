@@ -26,7 +26,7 @@ class SpriteSheet():
         sprite-sheets-and-drawing-the-background
     
     """
-    def __init__(self, filename):
+    def __init__(self, filename, sprite_size):
         """Loads the sprite sheet.
         
         :param filename: contains filepath of the sheet
@@ -44,6 +44,8 @@ class SpriteSheet():
         
         try:
             self.sheet = pygame.image.load(filename).convert()
+            self.sheet_size = self.sheet.get_size()
+            self.sprite_size = sprite_size
         except:
             log.error(mpos.msg.echo(
                 MODUL,
@@ -82,6 +84,11 @@ class SpriteSheet():
             
         return image
         
+    def image_rotate(self, image, angle):
+        
+        image_new = pygame.transform.rotate(image, angle)
+        return image_new
+    
     def images_at(self, rects, colorkey=None):
         """Loads a multiple sprites from sheet.
         
