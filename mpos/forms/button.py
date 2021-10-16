@@ -17,7 +17,7 @@ from mpos.helpers.logger import log
 MODUL = __name__
 
 class Button(pygame.sprite.Sprite):
-    """This class provides and manages the general button of
+    """ This class provides and manages the general button of
     mpos.forms.button that can be added to a title.
     
     :method __init__: sets up the basic button

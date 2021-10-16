@@ -1,5 +1,5 @@
 # Paladrium
-Just a try for developing a RPG in python with pygame
+Just a try for developing an RPG in python with pygame
 
 ## How do I get it to run?
 

@@ -26,7 +26,9 @@ class Game():
     
     """
     def __init__(self):
-        """Sets up the game."""
+        """
+        Sets up the game.
+        """
         self.game_running = False
         self.exit_game = False
         self.new_title = None
